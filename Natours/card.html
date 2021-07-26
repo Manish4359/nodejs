@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Card</title>
+    <style>
+      :root {
+        --card-color: hsl(240, 68%, 83%);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: hsl(0, 0%, 100%);
+      }
+      .card {
+        width: 250px;
+        height: 400px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: inset 1px 1px 20px 2px var(--card-color),
+          -1px -1px 10px 2px var(--card-color);
+      }
+
+      .text {
+        box-sizing: border-box;
+        padding: 30px;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <p class="text">
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Provident
+        pariatur alias odit aperiam tempora! In sit nobis officiis dicta,
+        suscipit qui ducimus quas exercitationem officia , ipsum aliquid!
+        Quisquam, nisi molestias. Lorem ipsum dolor sit, amet consectetur
+        adipisicing elit. Provident pariatur alias odit aperiam tempora! In sit
+        nobis officiis dicta, suscipit qui ducimus
+      </p>
+    </div>
+  </body>
+  <script>
+    const text = document.querySelector('.text');
+  </script>
+</html>
