@@ -32,7 +32,51 @@ exports.checkBody = (req, res, next) => {
 
 exports.getAllTours = async (req, res) => {
   try {
-    const tours = await Tour.find();
+    //BUILD QUERY
+
+    //FILTERING
+
+    console.log(req.query);
+    const queryObj = { ...req.query };
+    const excludedQuery = ['page', 'sort', 'fields', 'limits'];
+
+    excludedQuery.forEach((el) => delete queryObj[el]);
+    /*
+    const query =  Tour.find()
+      .where('difficulty')
+      .equals('easy')
+      .where('duration')
+      .equals(5);*/
+
+    //ADVANCED FILTERING
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (match) => `$${match}`);
+    console.log(JSON.parse(queryStr));
+
+    //EXECUTE QUERY
+
+    let query = Tour.find(JSON.parse(queryStr));
+
+    //SORTING
+
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(',').join(' ');
+      console.log(sortBy);
+      query = query.sort(sortBy);
+    } else {
+      query = query.sort('-createdAt');
+    }
+
+    //LIMITING FIELDS
+    if (req.query.fields) {
+      const fields = req.query.fields.split(',').join(' ');
+
+      query = query.select(fields);
+    } else {
+      query = query.select('-__v');
+    }
+    const tours = await query;
+
     res.status(200).json({
       status: 'success',
       results: tours.length,
