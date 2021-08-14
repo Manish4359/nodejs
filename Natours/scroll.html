@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      .a {
+        height: 100vh;
+        background: cadetblue;
+      }
+      .b {
+        height: 100vh;
+        background: rgb(118, 95, 160);
+      }
+      .c {
+        margin: 50px;
+        border: 1px solid black;
+        height: 200px;
+        padding: 5px;
+      }
+      .scr {
+        margin: 0 10px;
+        background: black;
+        height: 0;
+        width: 15px;
+        transition: all 0.2s;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="a">aaaaaaa</div>
+    <div class="c">
+      <div class="scr"></div>
+    </div>
+    <div class="b">bbbbbbbbbb</div>
+  </body>
+  <script>
+    const scrollBar = document.querySelector('.scr');
+    const elementA = document.querySelector('.a');
+    const elementB = document.querySelector('.b');
+    const elementC = document.querySelector('.c');
+
+    const options = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1,
+    };
+    const event = window.addEventListener('scroll', () => {
+      scrollBar.style.height = `${Math.trunc(this.scrollY / 5)}px`;
+    });
+    let x = 0;
+    const callback = (entries, observer) => {
+      const [entry] = entries;
+      console.log(entry);
+
+      if (entry.isIntersecting) {
+        x += 1;
+        event;
+      } else {
+        scrollBar.style.height = `${0}px`;
+        x = 0;
+      }
+    };
+    const observer = new IntersectionObserver(callback, options);
+    observer.observe(elementB);
+  </script>
+</html>
