@@ -2,9 +2,9 @@ const fs = require('fs');
 
 const Tour = require('../models/tourModel.js');
 const APIFeatures = require('../utils/apiFeatures');
-const AppError = require('../utils/appError.js');
 
 const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError.js');
 
 /*
 const tours = JSON.parse(
@@ -172,6 +172,10 @@ exports.updateTour = catchAsync(async (req, res, next) => {
     runValidators: true,
   });
 
+  if (!tour) {
+    return next(new AppError(`Tour not found`, 404));
+  }
+
   res.status(200).json({
     status: 'success',
     data: {
@@ -188,6 +192,7 @@ exports.deleteTour = catchAsync(async (req, res, next) => {
   if (!tour) {
     return next(new AppError(`Tour not found`, 404));
   }
+
   res.status(204).json({
     status: 'success',
     data: null,

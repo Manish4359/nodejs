@@ -2,8 +2,8 @@ const fs = require('fs');
 const express = require('express');
 const morgan = require('morgan');
 
-const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
+const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 
@@ -16,9 +16,12 @@ if (process.env.NODE_ENV === 'development') {
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 
+console.log(process.env.NODE_ENV);
+
 // app.get('/api/v1/tours', getAllTours);
 // app.get('/api/v1/tours/:id', getTour);
 // app.post('/api/v1/tours', createTour);
+
 // app.patch('/api/v1/tours/:id', updateTour);
 // app.delete('/api/v1/tours/:id', deleteTour);
 
@@ -29,6 +32,7 @@ app.all('*', (req, res, next) => {
   // const err = new Error(`can't find ${req.originalUrl} on the server`);
   // err.status = 'fail';
   // err.statusCode = 404;
+  console.log('globalerr');
   next(new AppError(`can't find ${req.originalUrl} on the server`, 404));
 });
 

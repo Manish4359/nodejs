@@ -6,9 +6,17 @@ const handleCastErrorDB = (err) => {
 };
 
 const handleDuplicateFieldsDB = (err) => {
-  const value = err.errmsg.match(/(["'])(?:(?=(\\?))\2.)*?\1/)[0];
+  const value = err.errmsg?.match(/(["'])(?:(?=(\\?))\2.)*?\1/)[0];
 
   const message = `duplicate field value:${value} , use another value`;
+  return new AppError(message, 400);
+};
+
+const handleValidationErrorDB = (err) => {
+  const errors = Object.values(err.errors)
+    .map((val) => val.message)
+    .join(', ');
+  const message = `invalid input data ; ${errors}`;
   return new AppError(message, 400);
 };
 
@@ -41,20 +49,24 @@ module.exports = (err, req, res, next) => {
   err.status = err.status || 'error';
 
   if (process.env.NODE_ENV === 'development') {
+    console.log('dev');
     sendErrorDev(err, res);
   }
 
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV == 'production') {
     let error = { ...err };
+    error.isOperational = true;
 
     if (err.name === 'CastError') {
-      error = handleCastErrorDB(error);
+      error = handleCastErrorDB(err);
     }
     if (err.code === 11000) {
-      error = handleDuplicateFieldsDB(error);
+      error = handleDuplicateFieldsDB(err);
+    }
+
+    if (err.name === 'ValidationError') {
+      error = handleValidationErrorDB(err);
     }
     sendErrorProd(error, res);
   }
-
-  next();
 };
