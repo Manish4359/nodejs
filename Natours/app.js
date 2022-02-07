@@ -10,10 +10,12 @@ const userRouter = require('./routes/userRoutes');
 const app = express();
 
 if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
+  app.use(morgan('dev')); 
 }
 
 app.use(express.json());
+
+//view static files like html/images
 app.use(express.static(`${__dirname}/public`));
 
 console.log(process.env.NODE_ENV);
@@ -32,10 +34,11 @@ app.all('*', (req, res, next) => {
   // const err = new Error(`can't find ${req.originalUrl} on the server`);
   // err.status = 'fail';
   // err.statusCode = 404;
-  console.log('globalerr');
+ // console.log('globalerr');
   next(new AppError(`can't find ${req.originalUrl} on the server`, 404));
 });
 
 app.use(globalErrorHandler);
 
 module.exports = app;
+

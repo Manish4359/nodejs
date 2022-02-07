@@ -10,10 +10,10 @@ server.on('request', (req, res) => {
             console.log(err);
 
         res.end(data);
-    });*/
-
-    //streams
-    /*  const readable = fs.createReadStream('testt-file.txt');
+    });
+*/
+    //stream events
+      const readable = fs.createReadStream('test-file.txt');
       readable.on("data", chunk => {
           res.write(chunk);
       });
@@ -24,14 +24,16 @@ server.on('request', (req, res) => {
           console.log(err);
           res.statusCode = 500;
           res.end("file not found");
-      });*/
+      });
 
     //pipe()-handles the speed of stream
+    /*
     const readable = fs.createReadStream('test-file.txt');
-    readable.pipe(res);
+   
+    readable.pipe(res);*/
 
 });
 
-server.listen('8080', "127.0.0.1", () => {
+server.listen('8080', () => {
     console.log("listening");
 });

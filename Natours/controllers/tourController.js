@@ -12,7 +12,7 @@ const tours = JSON.parse(
 );*/
 
 /*
-exports.checkId = (req, res, next, val) => {
+exports.checkId = (req, res, next, val) => { 
   console.log(`id:${val}`);
   if (req.params.id >= tours.length) {
     return res.status(404).json({
@@ -35,8 +35,9 @@ exports.checkBody = (req, res, next) => {
   next(); 
 };*/
 
+//middleware
 exports.aliasTopTours = (req, res, next) => {
-  req.query.limit = '5';
+  req.query.limit = '3';
   req.query.sort = '-ratingsAverage,price';
   req.query.fields = 'name,price,ratingsAverage,difficulty';
   next();
@@ -121,7 +122,7 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 
 exports.getTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findById(req.params.id);
-  //                 Tour.findOne({_id:req.params.id})
+  //const tour = await Tour.findOne({_id:req.params.id})
 
   if (!tour) {
     return next(new AppError(`Tour not found`, 404));
@@ -208,7 +209,7 @@ exports.getTourStat = catchAsync(async (req, res, next) => {
     },
     {
       $group: {
-        _id: '$difficulty',
+        _id:{$toUpper: '$difficulty'},
         numTour: { $sum: 1 },
         numRatings: { $sum: '$ratingsQuantity' },
         avgRating: { $avg: '$ratingsAverage' },
@@ -219,7 +220,7 @@ exports.getTourStat = catchAsync(async (req, res, next) => {
     },
     {
       $sort: {
-        avgPrice: 1,
+        avgPrice: -1,
       },
     },
   ]);

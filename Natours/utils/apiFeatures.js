@@ -1,6 +1,8 @@
+const Tour = require("../models/tourModel");
+
 module.exports = class APIFeatures {
   constructor(query, queryString) {
-    this.query = query;
+    this.query = query; 
     this.queryString = queryString;
   }
 
@@ -44,6 +46,15 @@ module.exports = class APIFeatures {
     const pageLimit = +this.queryString.limit || 10;
     const skip = (page - 1) * pageLimit;
     this.query = this.query.skip(skip).limit(pageLimit);
+
+   /* if(req.query.page){
+      const numTours =await Tour.countDocuments();
+
+      if(skip>numTours){
+        throw new Error("page doesn't exist");
+      }
+    }*/
     return this;
   }
 };
+ 

@@ -1,5 +1,5 @@
 //core modules
-const http = require("http");
+const {createServer} = require("http");
 const url = require("url");
 const fs = require("fs");
 
@@ -10,15 +10,19 @@ const slugify = require("slugify");
 const replaceTemplate = require("./modules/replaceTemplates");
 
 ///////////READ/WRITE FILE
+
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
+
 const tempCard = fs.readFileSync(
   `${__dirname}/templates/template-card.html`,
   "utf-8"
 );
+
 const tempOverview = fs.readFileSync(
   `${__dirname}/templates/template-overview.html`,
   "utf-8"
 );
+
 const tempProduct = fs.readFileSync(
   `${__dirname}/templates/template-product.html`,
   "utf-8"
@@ -31,7 +35,8 @@ const slugs = dataJson.map((item) =>
 console.log(slugs);
 
 /////////////SERVER
-const server = http.createServer((req, res) => {
+
+const server = createServer((req, res) => {
   const { query, pathname } = url.parse(req.url, true);
 
   console.log(query, pathname);

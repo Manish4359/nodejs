@@ -3,6 +3,7 @@ const slugify = require('slugify');
 const validator = require('validator');
 
 const tourSchema = new mongoose.Schema(
+  //schema-object
   {
     name: {
       type: String,
@@ -39,6 +40,7 @@ const tourSchema = new mongoose.Schema(
     priceDiscount: {
       type: Number,
       validate: {
+        //not works on update tour
         validator: function (val) {
           return val < this.price;
         },
@@ -70,6 +72,7 @@ const tourSchema = new mongoose.Schema(
       default: false,
     },
   },
+  //options
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
@@ -100,7 +103,7 @@ tourSchema.post('save', function (doc, next) {
 });
 */
 
-//MONGOOSE QUERY MIDDLEWARE
+//MONGOOSE QUERY MIDDLEWARE: executed before any find()
 tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
   this.start = Date.now();
