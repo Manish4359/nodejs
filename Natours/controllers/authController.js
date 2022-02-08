@@ -1,3 +1,4 @@
+const {promisify}=require('util');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
@@ -19,7 +20,8 @@ exports.signUp = catchAsync(async function (req, res, next) {
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm
+    passwordConfirm: req.body.passwordConfirm,
+    changedPassAt:req.body.changedPassAt
   })
 
   const token = signToken(newUser._id);
@@ -67,4 +69,37 @@ exports.login = catchAsync(async function (req, res, next) {
     token
     
   });
+});
+
+exports.protect=catchAsync(async function(req,res,next){
+
+  //getting token
+  let token;
+
+  if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
+
+    token=req.headers.authorization.split(' ')[1];
+  }
+
+  if(!token){
+    return  next(new AppError('Not logged in, login to get access',401));
+  }
+  //token verification
+  const decoded=await promisify(jwt.verify)(token,process.env.JWT_SECRET);
+  console.log(decoded);
+
+  //check user exists
+  const freshUser=await User.findById(decoded.id);
+
+  if(!freshUser){
+    return next( new AppError('user belonging to this tokn doesn\'t exists',401));
+  }
+  //check user changed pass after jwt issued
+  if(freshUser.changedPass(decoded.iat)){
+    return next(new AppError('user changed password recently, please relogin again',401));
+  }
+
+  //grant access to protected route
+  req.user=freshUser;
+  next();
 });

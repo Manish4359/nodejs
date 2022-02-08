@@ -33,6 +33,7 @@ const userSchema = new mongoose.Schema({
       message: "password doesn't match",
     },
   },
+  changedPassAt:Date
 });
 userSchema.pre('save',async function(next){
   //run if pass was modified
@@ -50,6 +51,19 @@ userSchema.methods.correctPass=async function(candidatePass,userPass){
 
   return await bcrypt.compare(candidatePass,userPass);
 }
+
+userSchema.methods.changedPass= function(JWTToken){
+
+  if(this.changedPassAt){
+
+    const changedTime=parseInt(this.changedPassAt.getTime()/1000);
+
+    return JWTToken<changedTime;
+  }
+
+  return false;
+}
+
 
 const User = new mongoose.model('User', userSchema);
 

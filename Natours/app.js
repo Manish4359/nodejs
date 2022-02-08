@@ -18,6 +18,14 @@ app.use(express.json());
 //view static files like html/images
 app.use(express.static(`${__dirname}/public`));
 
+app.use((req,res,next)=>{ 
+
+req.requestTime=new Date().toISOString();
+  console.log(req.headers);
+
+  next();
+})
+
 console.log(process.env.NODE_ENV);
 
 // app.get('/api/v1/tours', getAllTours);
