@@ -103,3 +103,14 @@ exports.protect=catchAsync(async function(req,res,next){
   req.user=freshUser;
   next();
 });
+
+exports.restrictTo=(...roles)=>{
+  return function(req,res,next){
+
+    if(!roles.includes(req.user.role)){
+      return next(new AppError('you have no permission to delete',403));
+    }
+
+    next();
+  }
+}

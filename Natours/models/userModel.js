@@ -33,7 +33,12 @@ const userSchema = new mongoose.Schema({
       message: "password doesn't match",
     },
   },
-  changedPassAt:Date
+  changedPassAt:Date,
+  role:{
+    type:String,
+    enum:['user','guide','admin'],
+    default:'user'
+  }
 });
 userSchema.pre('save',async function(next){
   //run if pass was modified

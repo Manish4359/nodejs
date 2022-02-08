@@ -33,7 +33,7 @@ exports.updateUser = (req, res) => {
 };
 exports.deleteUser = (req, res) => {
   res.status(500).json({
-    status: 'server error',
-    message: 'not defined',
+    status: 'success',
+    message: 'User',
   });
 };
