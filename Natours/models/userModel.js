@@ -40,8 +40,13 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'guide', 'admin'],
     default: 'user'
   },
-  passwordResetToken:String,
-  passwordResetExpires:Date
+  passwordResetToken: String,
+  passwordResetExpires: Date,
+  isActive: {
+    type: Boolean,
+    default: true,
+    select:false
+  }
 });
 userSchema.pre('save', async function (next) {
   //run if pass was modified
@@ -54,11 +59,17 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-userSchema.pre('save',function(next){
+userSchema.pre('save', function (next) {
+  
+  if (!this.isModified('password') || this.isNew) return next();
+  
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
 
-  if(!this.isModified('password') || this.isNew)return next();
-
-  this.passwordChangedAt=Date.now() - 1000;
+//mongoose query middleware
+userSchema.pre(/^find/, function (next) {
+  this.find({ isActive: {$ne:false} });
   next();
 });
 
@@ -83,14 +94,15 @@ userSchema.methods.changedPass = function (JWTToken) {
 userSchema.methods.passResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString('hex');
 
-  this.passwordResetToken= crypto.createHash('sha256').update(resetToken).digest('hex');
+  this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
-  this.passwordResetExpires=Date.now()+10*60*1000;
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
 
   console.log(this.passwordResetToken, this.passwordResetExpires);
-  
+
   return resetToken;
 }
 const User = new mongoose.model('User', userSchema);
 
 module.exports = User;
+

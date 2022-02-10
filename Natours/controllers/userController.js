@@ -29,7 +29,7 @@ const filteredObj=(body,...allowedFields)=>{
   return newBody;
 }
 
-exports.updateData=catchAsync(async (req,res,next)=>{
+exports.updateMyData=catchAsync(async (req,res,next)=>{
 
   //create error if user inputs password for update
   if(req.body.password || req.body.passwordConfirm){
@@ -43,8 +43,19 @@ exports.updateData=catchAsync(async (req,res,next)=>{
   const updatedUser=await User.findByIdAndUpdate(req.user.id,filteredBody,{new:true,validator:true})
 
   res.status(200).json({
-    status:'success'
+    status:'success',
+    updatedUser
   });
+})
+
+exports.deleteMyAccount = catchAsync(async (req,res,next)=>{
+
+  await User.findByIdAndUpdate(req.user.id,{isActive:false});
+
+  res.status(204).json({
+    status:'success',
+  });
+
 })
 exports.createUser = (req, res) => {
   res.status(500).json({
