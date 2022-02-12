@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 const validator = require('validator');
+//const User = require('./userModel');
 
 const tourSchema = new mongoose.Schema(
   //schema-object
@@ -94,6 +95,14 @@ const tourSchema = new mongoose.Schema(
         description: String,
         day: Number
       }
+    ],
+    //guides: Array
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+
+      }
     ]
   },
   //options
@@ -112,6 +121,21 @@ tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
+
+
+//data model embedding
+/*
+tourSchema.pre('save',async function (next) {
+  //this will return promises
+  const guidesPromise = this.guides.map(async (userId) => await User.findById(userId));
+
+  //resolving all the promises
+  this.guides = await Promise.all(guidesPromise);
+  next();
+});
+*/
+
+//data model referencing
 
 /*
 tourSchema.pre('save', function (next) {
@@ -134,10 +158,21 @@ tourSchema.pre(/^find/, function (next) {
   next();
 });
 
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v'
+  }
+  );
+
+  next();
+})
+
 tourSchema.post(/^find/, function (doc, next) {
   console.log(Date.now() - this.start);
   next();
 });
+
 
 //AGGREGATION MIDDLEWARE
 tourSchema.pre('aggregate', function (next) {
