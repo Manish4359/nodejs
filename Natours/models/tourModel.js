@@ -116,6 +116,19 @@ tourSchema.virtual('durationWeeks').get(function () {
   return Math.trunc(this.duration / 7);
 });
 
+//virtual populate
+tourSchema.virtual('reviews', {
+  //populating from which model
+  ref: 'Review',
+
+  //its child model field/where the reference to this model is stored
+  foreignField: 'tour',
+
+  //where that reference is stored in this model
+  localField: '_id'
+});
+
+
 //MONGOOSE DOCUMENT MIDDLEWARE :runs before .save() and .create()
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });

@@ -60,19 +60,19 @@ exports.deleteMyAccount = catchAsync(async (req,res,next)=>{
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: 'server error',
-    message: 'not defined',
+    message: 'route not defined',
   });
 };
 exports.getUser = (req, res) => {
   res.status(500).json({
     status: 'server error',
-    message: 'not defined',
+    message: 'route not defined',
   });
 };
 exports.updateUser = (req, res) => {
   res.status(500).json({
     status: 'server error',
-    message: 'not defined',
+    message: 'route not defined',
   });
 };
 exports.deleteUser = (req, res) => {

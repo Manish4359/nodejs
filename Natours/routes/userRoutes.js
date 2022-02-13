@@ -1,5 +1,6 @@
 const express = require('express');
 const userController = require('./../controllers/userController.js');
+const reviewController = require('./../controllers/reviewController.js');
 const authController = require('./../controllers/authController.js');
 
 const router = express.Router();
@@ -25,5 +26,6 @@ router
   .get(userController.getUser)
   .patch(userController.updateUser)
   .delete(userController.deleteUser);
+
 
 module.exports = router;

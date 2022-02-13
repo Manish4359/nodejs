@@ -121,8 +121,10 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 ///////////////////////////////////////////////////////////////
 
 exports.getTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id);
+  const tour = await Tour.findById(req.params.id).populate('reviews');
   //const tour = await Tour.findOne({_id:req.params.id})
+
+  
 
   if (!tour) {
     return next(new AppError(`Tour not found`, 404));
@@ -196,7 +198,7 @@ exports.deleteTour = catchAsync(async (req, res, next) => {
 
   res.status(204).json({
     status: 'success',
-    message:"tour deleted",
+    message: "tour deleted",
     data: null,
   });
 });
@@ -210,7 +212,7 @@ exports.getTourStat = catchAsync(async (req, res, next) => {
     },
     {
       $group: {
-        _id:{$toUpper: '$difficulty'},
+        _id: { $toUpper: '$difficulty' },
         numTour: { $sum: 1 },
         numRatings: { $sum: '$ratingsQuantity' },
         avgRating: { $avg: '$ratingsAverage' },
