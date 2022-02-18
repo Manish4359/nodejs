@@ -44,6 +44,8 @@ exports.aliasTopTours = (req, res, next) => {
   next();
 };
 
+exports.getAllTours = factory.getAll(Tour);
+/*
 exports.getAllTours = catchAsync(async (req, res, next) => {
   const features = new APIFeatures(Tour.find(), req.query)
     .filter()
@@ -58,7 +60,7 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
     results: tours.length,
     data: { tours },
   });
-});
+});*/
 
 //BUILD QUERY
 
@@ -121,21 +123,21 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 
 ///////////////////////////////////////////////////////////////
 
+
+exports.getTour=factory.getOne(Tour, {path:'reviews'});
+
+/*
 exports.getTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findById(req.params.id).populate('reviews');
-  //const tour = await Tour.findOne({_id:req.params.id})
-
-  
-
   if (!tour) {
     return next(new AppError(`Tour not found`, 404));
   }
-
   res.status(200).json({
     status: 'success',
     data: { tour },
   });
 });
+*/
 /*
 const tour = tours.find((item) => {
   if (item.id === +id) return item;

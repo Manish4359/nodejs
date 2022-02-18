@@ -5,8 +5,10 @@ const APIFeatures = require('../utils/apiFeatures');
 const factory=require('./handleFactory');
 
 const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError.js');
 
+
+
+/*
 exports.getAllReviews=catchAsync(async (req,res,next)=>{
 
     let filter={};
@@ -29,7 +31,7 @@ exports.getAllReviews=catchAsync(async (req,res,next)=>{
         }
     })
 
-});
+});*/
 
 exports.setReviewTourUserIds=(req,res,next)=>{
     if(!req.body.tour){
@@ -58,8 +60,10 @@ exports.createReview=catchAsync( async (req,res,next)=>{
 })
 
 
+exports.getAllReviews=factory.getAll(Review);
 
 exports.deleteReview=factory.deleteOne(Review);
 
 exports.updateReview = factory.updateOne(Review);
 
+exports.getReview=factory.getOne(Review);
