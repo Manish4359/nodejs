@@ -20,12 +20,11 @@ router.delete('/delete-account',authController.protect,userController.deleteMyAc
 router
   .route('/')
   .get(userController.getAllUsers)
-  .post(userController.createUser);
 router
   .route('/:id')
   .get(userController.getUser)
   .patch(userController.updateUser)
-  .delete(userController.deleteUser);
+  .delete(userController.deleteMyAccount);
 
 
 module.exports = router;

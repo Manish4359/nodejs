@@ -2,13 +2,19 @@ const fs = require('fs');
 
 const Review = require('../models/reviewModel.js');
 const APIFeatures = require('../utils/apiFeatures');
+const factory=require('./handleFactory');
 
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError.js');
 
 exports.getAllReviews=catchAsync(async (req,res,next)=>{
 
-    const reviews=await Review.find();
+    let filter={};
+
+    if(req.params.tourId){
+        filter={tour:req.params.tourId}
+    }
+    const reviews=await Review.find(filter);
 
     if(!reviews){
         return next(new AppError('no reviews found!!',404));
@@ -25,8 +31,7 @@ exports.getAllReviews=catchAsync(async (req,res,next)=>{
 
 });
 
-exports.createReview=catchAsync( async (req,res,next)=>{
-
+exports.setReviewTourUserIds=(req,res,next)=>{
     if(!req.body.tour){
         req.body.tour=req.params.tourId;
     }
@@ -34,6 +39,10 @@ exports.createReview=catchAsync( async (req,res,next)=>{
         req.body.user=req.user.id;
     }
 
+    next();
+};
+
+exports.createReview=catchAsync( async (req,res,next)=>{
 
     const data = await Review.create({
         review:req.body.review,
@@ -49,4 +58,8 @@ exports.createReview=catchAsync( async (req,res,next)=>{
 })
 
 
+
+exports.deleteReview=factory.deleteOne(Review);
+
+exports.updateReview = factory.updateOne(Review);
 

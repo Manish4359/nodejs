@@ -2,6 +2,7 @@ const fs = require('fs');
 
 const Tour = require('../models/tourModel.js');
 const APIFeatures = require('../utils/apiFeatures');
+const factory=require('./handleFactory');
 
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError.js');
@@ -147,11 +148,14 @@ res.status(200).json({
 
 ///////////////////////////////////////////////////////////////
 
+exports.createTour=factory.createOne(Tour);
+/*
 exports.createTour = catchAsync(async (req, res, next) => {
   console.log(req.body);
   const newTour = await Tour.create(req.body);
   res.status(201).json({ status: 'success', data: { tour: newTour } });
 });
+*/
 
 /*
   console.log(req.body); 
@@ -169,6 +173,10 @@ exports.createTour = catchAsync(async (req, res, next) => {
 
 ///////////////////////////////////////////////////////////////
 
+
+exports.updateTour=factory.updateOne(Tour);
+
+/*
 exports.updateTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
@@ -185,10 +193,12 @@ exports.updateTour = catchAsync(async (req, res, next) => {
       tour,
     },
   });
-});
+});*/
 
 ///////////////////////////////////////////////////////////////
 
+exports.deleteTour=factory.deleteOne(Tour);
+/*
 exports.deleteTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findByIdAndDelete(req.params.id);
 
@@ -201,7 +211,7 @@ exports.deleteTour = catchAsync(async (req, res, next) => {
     message: "tour deleted",
     data: null,
   });
-});
+});*/
 
 //////////////////////////////////////////////////////
 
