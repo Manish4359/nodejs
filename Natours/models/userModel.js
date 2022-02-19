@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
   changedPassAt: Date,
   role: {
     type: String,
-    enum: ['user', 'guide', 'admin'],
+    enum: ['user', 'guide', 'admin','lead-guide'],
     default: 'user'
   },
   passwordResetToken: String,
@@ -48,6 +48,8 @@ const userSchema = new mongoose.Schema({
     select:false
   }
 });
+
+
 userSchema.pre('save', async function (next) {
   //run if pass was modified
   if (!this.isModified('password')) return next();
@@ -66,6 +68,7 @@ userSchema.pre('save', function (next) {
   this.passwordChangedAt = Date.now() - 1000;
   next();
 });
+
 
 //mongoose query middleware
 userSchema.pre(/^find/, function (next) {

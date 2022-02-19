@@ -30,7 +30,11 @@ const filteredObj = (body, ...allowedFields) => {
   console.log(newBody);
   return newBody;
 }
+exports.getMe=(req,res,next)=>{
+  req.params.id=req.user.id;
 
+  next();
+}
 exports.updateMyData = catchAsync(async (req, res, next) => {
 
   //create error if user inputs password for update
