@@ -17,7 +17,7 @@ router
 router
   .route('/')
   .get(tourController.getAllTours)
-  .post(authController.protect,authController.restrictTo('guide','lead-guide'), tourController.createTour);
+  .post(authController.protect,authController.restrictTo('admin'), tourController.createTour);
 
 router
   .route('/:id')
@@ -25,12 +25,12 @@ router
   .patch(authController.protect,authController.restrictTo('guide','lead-guide'),tourController.updateTour)
   .delete(authController.protect, authController.restrictTo('guide','lead-guide'), tourController.deleteTour);
 
+
 /* 
+
 router
   .route('/:tourId/reviews')
   .post(authController.protect, authController.restrictTo('user'), reviewController.createReview)
  */
-
-
 
 module.exports = router;

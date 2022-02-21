@@ -124,7 +124,7 @@ exports.restrictTo = (...roles) => {
   return function (req, res, next) {
 
     if (!roles.includes(req.user.role)) {
-      return next(new AppError('you have no permission to delete', 403));
+      return next(new AppError('you have no permission', 403));
     }
 
     next();
