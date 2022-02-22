@@ -2,10 +2,11 @@ const fs = require('fs');
 
 const Tour = require('../models/tourModel.js');
 const APIFeatures = require('../utils/apiFeatures');
-const factory=require('./handleFactory');
+const factory = require('./handleFactory');
 
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError.js');
+const { default: dist } = require('express-rate-limit');
 
 /*
 const tours = JSON.parse(
@@ -124,7 +125,7 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 ///////////////////////////////////////////////////////////////
 
 
-exports.getTour=factory.getOne(Tour, {path:'reviews'});
+exports.getTour = factory.getOne(Tour, { path: 'reviews' });
 
 /*
 exports.getTour = catchAsync(async (req, res, next) => {
@@ -150,7 +151,7 @@ res.status(200).json({
 
 ///////////////////////////////////////////////////////////////
 
-exports.createTour=factory.createOne(Tour);
+exports.createTour = factory.createOne(Tour);
 /*
 exports.createTour = catchAsync(async (req, res, next) => {
   console.log(req.body);
@@ -176,7 +177,7 @@ exports.createTour = catchAsync(async (req, res, next) => {
 ///////////////////////////////////////////////////////////////
 
 
-exports.updateTour=factory.updateOne(Tour);
+exports.updateTour = factory.updateOne(Tour);
 
 /*
 exports.updateTour = catchAsync(async (req, res, next) => {
@@ -199,7 +200,7 @@ exports.updateTour = catchAsync(async (req, res, next) => {
 
 ///////////////////////////////////////////////////////////////
 
-exports.deleteTour=factory.deleteOne(Tour);
+exports.deleteTour = factory.deleteOne(Tour);
 /*
 exports.deleteTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findByIdAndDelete(req.params.id);
@@ -290,3 +291,70 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
     data: { plan },
   });
 });
+
+exports.getToursWithin = catchAsync(async (req, res, next) => {
+
+  const { distance, latlng, unit } = req.params;
+
+  const radius = unit === 'mi' ? distance / 3963.2 : 6378.1;
+
+  const [lat, lng] = latlng.split(',');
+
+  if (!lat || !lng) {
+    next(new AppError('provide a valid latitude and longitude', 404));
+  }
+
+
+  const tours = await Tour.find({
+    startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } }
+  });
+
+
+
+  res.status(200).json({
+    status: 'success',
+    results: tours.length,
+    data: {
+      tours
+    }
+  })
+})
+
+exports.getAllDistance = catchAsync(async (req, res, next) => {
+
+  const { latlng, unit } = req.params;
+
+  const [lat, lng] = latlng.split(',');
+
+  const multiplier=unit==='mi'?0.000621371:0.001;
+  if (!lat || !lng) {
+    next(new AppError('provide a valid latitude and longitude', 404));
+  };
+
+  const distances = await Tour.aggregate([
+    {
+
+      //must be a first stage
+      $geoNear: {
+        near: {
+          type: "Point", coordinates: [+lng, +lat]
+        },
+        distanceField: 'distance',
+        distanceMultiplier: multiplier
+      }
+    },
+    {
+      $project: {
+        distance: 1,
+        name: 1
+      }
+    }
+  ])
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      distances
+    }
+  })
+})
