@@ -1,3 +1,4 @@
+const path=require('path');
 const fs = require('fs');
 const express = require('express');
 const rateLimit=require('express-rate-limit');
@@ -12,12 +13,23 @@ const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
+const { dirname } = require('path');
 
 const app = express();
+
+//pug-template engine to render html 
+app.set('view engine','pug'); 
+
+//path of html templates
+app.set('views',path.join(__dirname,'views'));
+
 
 //global middlewares
 //sets security http headers
 app.use(helmet());
+
+//view static files like html/images
+app.use(express.static(path.join(__dirname,'public')));
 
 
 if (process.env.NODE_ENV === 'development') {
@@ -46,8 +58,6 @@ app.use(hpp({
   whitelist:['duration','maxGroupSize','difficulty','ratingsAverage','ratingsQuantity','price']
 }));
 
-//view static files like html/images
-app.use(express.static(`${__dirname}/public`));
 
 //test middleware
 app.use((req,res,next)=>{ 
@@ -66,6 +76,14 @@ console.log(process.env.NODE_ENV);
 
 // app.patch('/api/v1/tours/:id', updateTour);
 // app.delete('/api/v1/tours/:id', deleteTour);
+
+//will render the base.pug 
+app.get('/',(req,res)=>{
+  res.status(200).render('base',{
+    name:"manish kumar",
+    specialization:"fsd"
+  });
+})
 
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
