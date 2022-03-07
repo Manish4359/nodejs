@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cookieParser= require('cookie-parser');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -17,6 +18,14 @@ const viewRouter = require('./routes/viewRoutes');
 const { dirname } = require('path');
 
 const app = express();
+//cors
+const cors = require("cors");
+const corsOptions = {
+  origin: '*',
+  credentials: true,
+  optionSuccessStatus: 200,
+}
+app.use(cors(corsOptions))
 
 //pug-template engine to render html 
 app.set('view engine', 'pug');
@@ -25,7 +34,7 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 
-//global middlewares
+//global middlewares 
 //sets security http headers
 app.use(helmet());
 
@@ -47,6 +56,7 @@ app.use('/api', limiter);
 
 ///body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
+app.use(cookieParser());
 
 //data sanitization against noSQL query injection
 app.use(mongoSanitize());
@@ -65,7 +75,7 @@ app.use((req, res, next) => {
 
   req.requestTime = new Date().toISOString();
   // console.log(req.headers);
-
+  console.log(req.cookies);
   next();
 })
 

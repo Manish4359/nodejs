@@ -19,7 +19,9 @@ const createSendToken = (user, statusCode, res) => {
 
   const cookieOptions = {
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * process.env.JWT_COOKIE_EXPIRES_TIME),
-    httpOnly: true
+    httpOnly: true,
+    sameSite: 'none',
+    secure: true
   }
 
   if (process.env.NODE_ENV == 'production') {
@@ -27,18 +29,23 @@ const createSendToken = (user, statusCode, res) => {
   }
 
   //hide password from output
-  user.password=undefined;
+  user.password = undefined;
 
   res.cookie('jwt', token, cookieOptions)
 
-  res.status(statusCode).json({
-    status: 'success',
-    token,
-    data: {
-      user,
-    },
-  });
+  res.status(statusCode)
+    .json({
+      status: 'success',
+      message: "Logged in Successfully",
+      token,
+      data: {
+        user,
+      },
+    });
 }
+
+//////////////////////////////////////////////////
+
 exports.signUp = catchAsync(async function (req, res, next) {
   //this code has a flow/ anyone can make themselves as an admin /can manipulate the data
   //const newUser = await User.create(req.body);
@@ -54,6 +61,8 @@ exports.signUp = catchAsync(async function (req, res, next) {
 
   createSendToken(newUser, 201, res);
 });
+
+////////////////////////////////////////////////////
 
 exports.login = catchAsync(async function (req, res, next) {
 
@@ -95,6 +104,8 @@ exports.protect = catchAsync(async function (req, res, next) {
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
 
     token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
   }
 
   if (!token) {
@@ -225,4 +236,40 @@ exports.updatePass = catchAsync(async (req, res, next) => {
   //login user in, Send JWT
   createSendToken(user, 200, res);
 
+})
+
+//only for rendered pages
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+
+  if (req.cookies.jwt) {
+    const decoded = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
+
+    //check user exists
+    const freshUser = await User.findById(decoded.id);
+
+    if (!freshUser) return next();
+
+    //check user changed pass after jwt issued
+    if (freshUser.changedPass(decoded.iat)) {
+      return next();
+    }
+
+    //logged in user
+    res.locals.user = freshUser;
+    next();
+  } else
+    next();
+});
+
+////////////////////////////////////////////////////////
+
+exports.logout = catchAsync((req, res, next) => {
+  res.cookie('jwt', '', {
+    httpOnly: true,
+    expires: new Date(Date.now() + 1000)
+  });
+
+  res.status(200).json({
+    status:"success"
+  })
 })
