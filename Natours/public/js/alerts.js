@@ -11,3 +11,5 @@ export const showAlert=(type,msg)=>{
 
     window.setTimeout(hideAlert,2000);
 }
+
+

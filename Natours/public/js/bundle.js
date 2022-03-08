@@ -3188,8 +3188,9 @@ var _mapBox = require("./mapBox");
 
 //import {logout} from './logout'
 var mapBox = document.querySelector('#map');
-var loginForm = document.querySelector('.form');
+var loginForm = document.querySelector('.form-login-data');
 var logoutBtn = document.querySelector('.nav__el--logout');
+var accountBtn = document.querySelector('.qwerty');
 
 if (mapBox) {
   locations = JSON.parse(mapBox.dataset.locations);
@@ -3238,7 +3239,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52970" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62512" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

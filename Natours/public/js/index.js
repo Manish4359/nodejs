@@ -5,8 +5,9 @@ import { displayMap } from './mapBox';
 //import {logout} from './logout'
 
 const mapBox = document.querySelector('#map');
-const loginForm = document.querySelector('.form');
+const loginForm = document.querySelector('.form-login-data');
 const logoutBtn=document.querySelector('.nav__el--logout');
+const accountBtn=document.querySelector('.qwerty')
 
 
 if (mapBox) {
