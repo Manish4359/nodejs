@@ -59,18 +59,24 @@ exports.login = catchAsync(async (req, res, next) => {
     })
 })
 
+/*
 exports.UpdateAccount = catchAsync(async (req, res, next) => {
-    console.log(req);
     const updatedUser = await User.findByIdAndUpdate(req.user._id, {
         name: req.body.name,
         email: req.body.email
     }, {
         new: true, validators: true
     });
-    
+
     res.locals.user=updatedUser;
 
     res.status(200).render('user', {
+        title: 'My Account'
+    })
+})*/
+
+exports.UpdateAccount = catchAsync(async (req, res, next) => {
+    res.status(200).render('user',{
         title: 'My Account'
     })
 })

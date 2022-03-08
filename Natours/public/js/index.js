@@ -2,12 +2,14 @@ import 'regenerator-runtime/runtime'
 import { login } from './login';
 import { logout } from './logout';
 import { displayMap } from './mapBox';
+import {updateSettings} from './updateSettings';
 //import {logout} from './logout'
 
 const mapBox = document.querySelector('#map');
 const loginForm = document.querySelector('.form-login-data');
 const logoutBtn=document.querySelector('.nav__el--logout');
-const accountBtn=document.querySelector('.qwerty')
+const userUpdateBtn=document.querySelector('.form-user-data');
+const userUpdatePassBtn=document.querySelector('.form-user-settings');
 
 
 if (mapBox) {
@@ -32,3 +34,43 @@ if(logoutBtn){
         logout();
     })
 } 
+if(userUpdateBtn){
+
+    userUpdateBtn.addEventListener('submit',(e)=>{
+
+        e.preventDefault();
+        const name=document.getElementById('name').value;
+        const email=document.getElementById('email').value;
+
+        const data={
+            name,
+            email
+        }
+        updateSettings(data,'data');
+    })
+}
+
+if(userUpdatePassBtn){
+
+    userUpdatePassBtn.addEventListener('submit',async (e)=>{
+
+        e.preventDefault();
+
+        document.querySelector('.btn-save-pass').textContent='Updating...'
+
+        const password=document.getElementById('password-current').value;
+        const newPassword=document.getElementById('password').value;
+        const newPasswordConfirm=document.getElementById('password-confirm').value;
+
+        const data={
+            password,
+            newPassword,
+            newPasswordConfirm
+        }
+
+        await updateSettings(data,'password');
+
+        document.querySelector('.btn-save-pass').textContent='Save Password'
+
+    })
+}
