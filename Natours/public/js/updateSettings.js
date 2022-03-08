@@ -17,7 +17,6 @@ export const updateSettings = async (data, type) => {
             Credential: 'include'
         });
 
-        console.log(updatedData);
 
         if (updatedData.data.status === 'success') {
             showAlert('success', `${type.toUpperCase()} Data Updated Successfully!!`)

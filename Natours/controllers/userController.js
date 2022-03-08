@@ -1,9 +1,37 @@
 const User = require('../models/userModel.js');
 const AppError = require('../utils/appError.js');
 const catchAsync = require('./../utils/catchAsync.js');
+const multer = require('multer');
 
 const factory = require('./handleFactory');
 
+
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/img/users')
+  },
+  filename: (req, file, cb) => {
+    // user-451265f2g5-496523.jpg
+    const ext = file.mimetype.split('/')[1]
+    cb(null, `user-${req.user.id}-${Date.now()}.${ext}`)
+  }
+})
+const multerFilter = (req, file, cb) => {
+
+  if (file.mimetype.startsWith('image')) {
+
+    cb(null, true);
+  } else {
+    cb(new AppError('Not an Image',400), false);
+  }
+}
+
+const upload = multer({ 
+  storage:multerStorage,
+  fileFilter:multerFilter
+ })
+
+exports.uploadUserPhoto = upload.single('photo');
 /*
 exports.getAllUsers = catchAsync(async (req, res) => {
   
@@ -18,36 +46,38 @@ exports.getAllUsers = catchAsync(async (req, res) => {
 });*/
 
 const filteredObj = (body, ...allowedFields) => {
-  
+
   let newBody = {};
-  
+
   Object.keys(body).forEach(el => {
-    
+
     if (allowedFields.includes(el)) {
       newBody[el] = body[el];
     }
   });
-  console.log(newBody);
   return newBody;
 }
-exports.getMe=(req,res,next)=>{
-  req.params.id=req.user.id;
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
 
   next();
 }
 exports.updateMyData = catchAsync(async (req, res, next) => {
 
+  console.log(req.file)
+  console.log(req.body)
+
   //create error if user inputs password for update
   if (req.body.password || req.body.passwordConfirm) {
     return next(new AppError('cannot update password', 400));
   }
-  
+
   //update user account
-  
-  
+
+
   const filteredBody = filteredObj(req.body, 'name', 'email');
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, { new: true, validator: true })
-  
+
   res.status(200).json({
     status: 'success',
     updatedUser
@@ -56,9 +86,9 @@ exports.updateMyData = catchAsync(async (req, res, next) => {
 
 
 exports.deleteMyAccount = catchAsync(async (req, res, next) => {
-  
+
   await User.findByIdAndUpdate(req.user.id, { isActive: false });
-  
+
   res.status(204).json({
     status: 'success',
   });
@@ -71,6 +101,6 @@ exports.updateUser = factory.updateOne(User);
 
 exports.deleteUser = factory.deleteOne(User);
 
-exports.getUser=factory.getOne(User);
+exports.getUser = factory.getOne(User);
 
-exports.getAllUsers=factory.getAll(User);
+exports.getAllUsers = factory.getAll(User);

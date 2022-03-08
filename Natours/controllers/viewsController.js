@@ -8,11 +8,8 @@ exports.getOverview = catchAsync(async (req, res, next) => {
 
     //get tour data from collection
     const tours = await Tour.find();
-    // console.log(tours);
 
-    //build template
-
-    //render
+    //build template and render
     res.status(200).render('overview', {
         title: `Exciting tours for adventurous people`,
         tours

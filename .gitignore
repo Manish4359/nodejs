@@ -1,3 +1,7 @@
 node_modules/
 
-/Natours/node_modules/node_modules/
+./Natours/node_modules/node_modules/
+
+./Natours/.cache/
+
+

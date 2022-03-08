@@ -81,7 +81,7 @@ exports.login = catchAsync(async function (req, res, next) {
   //if username exists and pass is correct
   const user = await User.findOne({ email }).select('+password');
 
-  console.log(user);
+  //console.log(user);
 
   //  const isPassCorrect=user.correctPass(password,user.password);
 
@@ -113,7 +113,6 @@ exports.protect = catchAsync(async function (req, res, next) {
   }
   //token verification
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  console.log(decoded);
 
   //check user exists
   const freshUser = await User.findById(decoded.id);
