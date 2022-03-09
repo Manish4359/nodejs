@@ -77,3 +77,9 @@ exports.UpdateAccount = catchAsync(async (req, res, next) => {
         title: 'My Account'
     })
 })
+
+exports.signup=catchAsync(async(req, res, next) => {
+    res.status(200).render('signup',{
+        title: 'Create Account'
+    })
+})

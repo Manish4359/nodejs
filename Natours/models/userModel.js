@@ -16,7 +16,10 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     validate: [validator.isEmail, 'invalid email'],
   },
-  photo: String,
+  photo: {
+    type: String,
+    default: 'default.jpg'
+  },
   password: {
     type: String,
     required: [true, 'enter a password'],
@@ -37,7 +40,7 @@ const userSchema = new mongoose.Schema({
   changedPassAt: Date,
   role: {
     type: String,
-    enum: ['user', 'guide', 'admin','lead-guide'],
+    enum: ['user', 'guide', 'admin', 'lead-guide'],
     default: 'user'
   },
   passwordResetToken: String,
@@ -45,7 +48,7 @@ const userSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true,
-    select:false
+    select: false
   }
 });
 
@@ -62,9 +65,9 @@ userSchema.pre('save', async function (next) {
 });
 
 userSchema.pre('save', function (next) {
-  
+
   if (!this.isModified('password') || this.isNew) return next();
-  
+
   this.passwordChangedAt = Date.now() - 1000;
   next();
 });
@@ -72,7 +75,7 @@ userSchema.pre('save', function (next) {
 
 //mongoose query middleware
 userSchema.pre(/^find/, function (next) {
-  this.find({ isActive: {$ne:false} });
+  this.find({ isActive: { $ne: false } });
   next();
 });
 

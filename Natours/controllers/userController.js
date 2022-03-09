@@ -64,9 +64,6 @@ exports.getMe = (req, res, next) => {
 }
 exports.updateMyData = catchAsync(async (req, res, next) => {
 
-  console.log(req.file)
-  console.log(req.body)
-
   //create error if user inputs password for update
   if (req.body.password || req.body.passwordConfirm) {
     return next(new AppError('cannot update password', 400));
@@ -74,8 +71,9 @@ exports.updateMyData = catchAsync(async (req, res, next) => {
 
   //update user account
 
-
   const filteredBody = filteredObj(req.body, 'name', 'email');
+  if(req.file) filteredBody.photo=req.file.filename;
+
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, { new: true, validator: true })
 
   res.status(200).json({

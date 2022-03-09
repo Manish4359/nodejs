@@ -14,5 +14,7 @@ router.get(`/login`,authController.isLoggedIn,viewsController.login);
 
 router.get('/about',authController.protect,viewsController.myAccount);
 //router.post('/submit-user-data',authController.protect,viewsController.UpdateAccount);
+
+router.get('/signup',viewsController.signup);
  
 module.exports = router;
