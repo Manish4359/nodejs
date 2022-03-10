@@ -8,7 +8,7 @@ const bcrypt = require('bcryptjs');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('./../utils/appError')
 const User = require('./../models/userModel');
-const sendEmail = require('./../utils/email');
+const Email = require('./../utils/email');
 
 const signToken = id => jwt.sign({ id }, process.env.JWT_SECRET, {
   expiresIn: process.env.JWT_EXPIRES_TIME
@@ -59,6 +59,9 @@ exports.signUp = catchAsync(async function (req, res, next) {
   })
 
 
+  const url=`${req.protocol}://${req.get('host')}/about`;
+
+  await new Email(newUser,url).sendWelcome();
   createSendToken(newUser, 201, res);
 });
 
@@ -129,7 +132,7 @@ exports.protect = catchAsync(async function (req, res, next) {
   req.user = freshUser;
 
   //for pug
-  res.locals.user=freshUser;
+  res.locals.user = freshUser;
   next();
 });
 
@@ -157,23 +160,15 @@ exports.forgotPass = catchAsync(async function (req, res, next) {
   const resetToken = user.passResetToken();
   await user.save({ validateBeforeSave: false });
 
+  try {
   //send to the user's email
   const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/reset-password/${resetToken}`;
 
-  const message = `forgot password? enter new passord and confirm ${resetURL}`;
-
-  try {
-
-    await sendEmail({
-      email: user.email,
-      subject: 'your password reset token is valid for 10 min',
-      message
-    });
-
+        await new Email(user,resetURL).sendPassReset();
 
     res.status(200).json({
       status: 'success',
-      message: 'token sent to email'
+      message: 'token sent to email' 
     })
   } catch (err) {
     user.passwordResetToken = undefined;
@@ -272,6 +267,6 @@ exports.logout = catchAsync((req, res, next) => {
   });
 
   res.status(200).json({
-    status:"success"
+    status: "success"
   })
 })
