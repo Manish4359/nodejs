@@ -9,9 +9,20 @@ module.exports = class Email {
         this.url = url;
         this.from = `Manish <${process.env.EMAIL_FROM}`;
     }
+
+
     newTransport() {
         if (process.env.NODE_ENV === 'production') {
-            return 1;
+            console.log('mmmmmmmmmmmmmmmm')
+            return nodemailer.createTransport({
+                
+                service: 'SendGrid', 
+                auth: {
+                    user: process.env.SENDGRID_USERNAME,
+                    pass: process.env.SENDGRID_PASSWORD
+
+                }
+            })
         }
 
 
@@ -59,7 +70,7 @@ module.exports = class Email {
         await this.send('welcome', 'welcome to our community');
     }
 
-    async sendPassReset(){
-        await this.send('passwordReset','Your password reset token valid for 5 min')
+    async sendPassReset() {
+        await this.send('passwordReset', 'Your password reset token valid for 5 min')
     }
 }

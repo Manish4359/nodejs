@@ -83,6 +83,8 @@ module.exports = (err, req, res, next) => {
     let error = { ...err };
     error.isOperational = true;
 
+    console.log(error);
+
     if (err.name === 'CastError') {
       error = handleCastErrorDB(err);
     }
